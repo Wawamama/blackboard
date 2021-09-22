@@ -13,7 +13,7 @@ const messageSchema = mongoose.Schema({
     title: String,
     content: String,
     read: Boolean,
-    dateExp: String,
+    dateExp: Date,
     sender: String
 })
 

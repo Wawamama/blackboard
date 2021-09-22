@@ -44,4 +44,8 @@ app.locals.dateFormat = (date) => {
   return formatedDate.substring(0, formatedDate.length-3)
 }
 
+app.locals.compareDates = (date1, date2) => {
+  return (new Date(date1) < new Date(date2))
+}
+
 module.exports = app;

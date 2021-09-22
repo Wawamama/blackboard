@@ -37,21 +37,16 @@
         <div class="container-fluid">
 
           <div class="list-group">
-            <% 
-              const compareDates = (date1, date2) => {
-                return (date1 < date2)
-              }
-            %>
-
+          
             <% tasks.forEach(task => { 
               let bgColorClass = ''
               let message = ''
               if(task.dateCloture) {
                 bgColorClass = 'list-group-item-success'
-                message = `Cloturé le ${task.dateCloture}`
+                message = `Cloturé le ${dateFormat(task.dateCloture)}`
               } else if (compareDates(task.dateDue, new Date())) {
                 bgColorClass= 'list-group-item-danger'
-                message = `Date de la demande: ${task.dateInsert}`
+                message = `Date de la demande: ${dateFormat(task.dateInsert)}`
               }
               %>
               <a href="#" class="list-group-item <%= bgColorClass %>">
@@ -60,7 +55,7 @@
                   <small> <%= message %></small>
                 </div>
                 <p class="mb-1"><%= task.name %></p>
-                <small>Echéance: <%= task.dateDue %></small>
+                <small>Echéance: <%= dateFormat(task.dateDue) %></small>
             </a>
             <% }) %>
           </div>

@@ -60,8 +60,80 @@ router.get('/order-page', async function(req, res, next) {
 });
 
 /* GET chart page. */
-router.get('/charts', function(req, res, next) {
-  res.render('charts');
+router.get('/charts', async function(req, res, next) {
+  try {
+
+    const genderedUsers = await User.aggregate([
+      { $group: { _id: '$gender', total: { $sum: 1 } } }, {$sort: {'total':-1}}])
+
+    const readMessages = await User.aggregate(
+      [
+        { 
+          $match: { status: 'admin'} 
+        },
+        {
+          $unwind: {
+            path: '$messages'
+          }
+        },
+        { 
+          $group: { 
+            _id: '$messages.read', 
+            total: { $sum: 1} 
+          }
+        },
+        {
+          $sort: {
+            'total': 1
+          }
+        }
+      ]
+    )
+
+    const shippedOrders = await Order.aggregate(
+      [
+        {
+          $match: {status_payment: 'validated'}
+        },
+        {
+          $group: {
+            _id: '$status_shipment',
+            total: { $sum: 1}
+          }
+        },
+        {
+          $sort: {
+            'total':-1
+          }
+        }
+      ]
+    )
+
+    const moneyByMonth = await Order.aggregate(
+      [
+        {
+          $match : {status_payment: 'validated'}
+        },
+        {
+          $group: {
+              _id:{ $month: '$date_payment' },
+              totalByMonth: { $sum: '$total'}
+            }
+        },
+        {
+          $sort: {
+            '_id': 1
+          }
+        }
+      ]
+    )
+
+    console.log(moneyByMonth)
+
+    res.render('charts', {genderedUsers, readMessages, shippedOrders, moneyByMonth} );
+  } catch(err) {
+    console.log(err)
+  }
 });
 
 
